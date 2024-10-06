@@ -1,1 +1,7 @@
-<blockquote>Todo: Skapa ett formulär för att spara nya frukter till databasen.</blockquote>
+<div class="d-flex justify-content-center">
+  <div class="card mb-4" style="width: auto;">
+    <div class="card-body">
+      <%= @fruitFormCell.create_fruit("Fruit Name", 5, "Fruit description", 100, "Fruit Category", t) %>
+    </div>
+  </div>
+</div>

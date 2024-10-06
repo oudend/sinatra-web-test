@@ -1,0 +1,64 @@
+<div class="card w-100 h-100">
+  <img src="<%= @fruit_data['image_path'] || '/img/affaren.png' %>" class="card-img-top w-100" style="object-fit: cover; height: 204px;" alt="<%= @fruit_data['name'] %> image">
+  
+  <div class="card-body" style="overflow: hidden; height: 200px">
+    <h4 class="card-title"><%= @fruit_data['name'] %></h4>
+    <p class="card-text" style="overflow: hidden; text-overflow: ellipsis; height: 100px"><%= @fruit_data['description'] %></p>
+    <!-- Display comment count -->
+    <p class="card-text"><small class="text-muted"><%= @fruit_data['comment_count'] %> <%= @t.general.comments %></small></p>
+  </div>
+
+  <ul class="list-group list-group-flush">
+    <% @filtered_fruit_data = @fruit_data.except('image_path', 'name', 'description', 'edited_at', 'comment_count') %>
+    <% @filtered_fruit_data.each do |fruit_attribute, fruit_attribute_value| %>
+    <li class="list-group-item">
+      <div class="row">
+        <div class="col-sm">
+          <%= fruit_attribute.capitalize %>
+        </div>
+        <div class="col-sm">
+          <%= fruit_attribute_value %>
+        </div>
+      </div>
+    </li>
+    <% end %>
+
+    <li class="list-group-item">
+      <a href="/fruits/<%= @fruit_data['id'] %>" class="btn btn-primary w-100"> <%= @t.general.edit %> </a>
+    </li>
+
+    <li class="list-group-item">
+      <!-- Remove Button triggers modal -->
+      <button type="button" class="btn btn-danger w-100" data-bs-toggle="modal" data-bs-target="#<%= @fruit_data['id'] %>confirmRemoveModal">
+        <%= @t.general.remove %>
+      </button>
+    </li>
+  </ul>
+
+  <div class="card-footer" style="height: 90px">
+    <p class="card-text"><small class="text-muted">Last updated <%= @edited_at %></small></p>
+  </div>
+</div>
+
+<!-- Modal for Confirmation -->
+<div class="modal fade" id="<%= @fruit_data['id'] %>confirmRemoveModal" tabindex="-1" role="dialog" aria-labelledby="<%= @fruit_data['id'] %>confirmRemoveModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="confirmRemoveModalLabel"><%= @t.general.remove %></h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <%= @t.general.confirmRemove(@fruit_data['name']) %>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"><%= @t.general.cancel %></button>
+
+        <!-- Confirm Removal Button -->
+        <form action="/fruits/remove/<%= @fruit_data['id'] %>" method="POST">
+          <button type="submit" class="btn btn-danger"><%= @t.general.remove %></button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

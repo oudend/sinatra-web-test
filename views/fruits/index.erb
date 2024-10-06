@@ -1,7 +1,93 @@
-<h2>Alla frukter i butiken</h2>
+<h2 class="text-center my-4"><%=t.fruit.all%></h2>
 
-<ul>
-<% @fruits.each do |fruit| %>
-  <li><a href="/fruits/<%= fruit['id']%>"><%= fruit['name'] %></a></li>
-<% end %>
-</ul>
+<!-- Search Bar -->
+<div class="container mb-4">
+  <div class="input-group">
+    <input type="text" class="form-control" id="fruitSearch" placeholder="<%=t.fruit.search%>" aria-label="<%=t.fruit.search%>">
+  </div>
+</div>
+
+<div class="container" id="fruitContainer">
+  <% @fruit_categories.each do |row| %>
+    <div class="category-list" id="<%= row['category'] %>" data-name="<%= row['category'] %>">
+      <hr class="my-4">
+
+      <h3 class="mt-4"><%= row['category'] %></h3>
+
+      <div class="row g-3 fruit-category" data-category="<%= row['category'] %>">
+        <% @categorized_fruit[row['category']].each do |fruit| %>
+          <div class="col-sm-6 col-md-4 col-lg-3 fruit-card" data-name="<%= fruit['name'] %>">
+            <div class="card d-flex align-items-stretch">
+              <%= @fruitCardCell.show(fruit.except('category'), t) %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/fuse.js@6.4.6"></script>
+<script nonce="<%= @nonce %>">
+  // 1. Extract @categorized_fruit from the ERB to JavaScript
+  const categorizedFruits = <%= @categorized_fruit.to_json %>;
+
+  // 2. Prepare the search list for Fuse.js
+  const fruitsList = [];
+  for (const category in categorizedFruits) {
+    categorizedFruits[category].forEach(fruit => {
+      fruitsList.push({
+        category: category,
+        name: fruit.name,
+        element: document.querySelector(`.fruit-card[data-name="${fruit.name}"]`),
+        categoryElement: document.querySelector(`.category-list[data-name="${category}"]`)
+      });
+    });
+  }
+
+  // 3. Initialize Fuse.js
+  const options = {
+    keys: ['name', 'category'], // Search by fruit name and category
+    threshold: 0.4 // Adjust for fuzzy matching tolerance
+  };
+  const fuse = new Fuse(fruitsList, options);
+
+  function debounce(fn, delay) {
+    let timer;
+    return (() => {
+      clearTimeout(timer);
+      timer = setTimeout(() => fn(), delay);
+    })();
+    
+  };
+
+  // 4. Handle search
+  const searchInput = document.getElementById('fruitSearch');
+
+  function searchQuery() {
+    const query = searchInput.value;
+    const results = fuse.search(query);
+
+    // 5. Hide all fruits
+    document.querySelectorAll('.fruit-card').forEach(item => item.style.display = 'none');
+    document.querySelectorAll('.category-list').forEach(item => item.style.display = 'none');
+
+    // 6. Show fruits matching the search results
+    if (results.length > 0) {
+      results.forEach((result) => {
+        result.item.element.style.display = 'block'
+      });
+      results.forEach((result) => {
+        result.item.categoryElement.style.display = 'block'
+      });
+    } else if (!query) {
+      // Show all items if search query is cleared
+      document.querySelectorAll('.fruit-card').forEach(item => item.style.display = 'block');
+      document.querySelectorAll('.category-list').forEach(item => item.style.display = 'block');
+    }
+  }
+
+  searchInput.addEventListener('input', () => { 
+    debounce(searchQuery, 1000) 
+  });
+</script>

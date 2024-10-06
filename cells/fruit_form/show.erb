@@ -1,0 +1,138 @@
+<!-- app/components/fruit_form_component.html.erb -->
+<form id="fruit_form" class="mb-4">
+  <div class="form-group mb-3">
+    <label for="name"><%= @locale.fruit.name %></label>
+    <input type="text" class="form-control" id="name" value="<%= @fruit_data['name'] %>" name="name">
+  </div>
+
+  <div class="form-group mb-3">
+    <label for="tastiness"><%= @locale.fruit.tastiness %></label>
+    <input type="text" class="form-control" id="tastiness" value="<%= @fruit_data['tastiness'] %>" name="tastiness">
+  </div>
+
+  <div class="form-group mb-3">
+    <label for="description"><%= @locale.fruit.description %></label>
+    <input type="text" class="form-control" id="description" value="<%= @fruit_data['description'] %>" name="description">
+  </div>
+
+  <div class="form-group mb-3">
+    <label for="price"><%= @locale.fruit.price %></label>
+    <input type="text" class="form-control" id="price" value="<%= @fruit_data['price'] %>" name="price">
+  </div>
+
+  <div class="form-group mb-3">
+    <label for="category"><%= @locale.fruit.category %></label>
+    <input type="text" class="form-control" id="category" value="<%= @fruit_data['category'] %>" name="category">
+  </div>
+
+  <div class="mb-4">
+    <label for="image" class="form-label"><%= @locale.fruit.image %></label>
+    <input class="form-control" type="file" id="image" name="image" accept="image/*" onchange="previewImage(event)">
+  </div>
+
+  <div class="mb-4">
+    <img id="imagePreview" class="img-fluid" alt="Image Preview" style="width: 100%; object-fit: cover; height: 304px; display: none;">
+  </div>
+
+  <div class="mb-4">
+    <button type="button" class="btn btn-danger" id="removeImage" style="display: none">Remove</button>
+  </div>
+
+  <button type="submit" class="btn btn-primary w-100"><%= @locale.general.submit %></button>
+</form>
+
+<script>
+  var imageRemoved = false;
+
+  function previewImage(event) {
+    document.getElementById("removeImage").style.display = 'block';
+
+    const imageInput = event.target;
+    const file = imageInput.files[0];
+
+    if (file) {
+      const reader = new FileReader();
+
+      reader.onload = function(e) {
+        const imagePreview = document.getElementById('imagePreview');
+        imagePreview.src = e.target.result;
+        imagePreview.style.display = 'block';
+        imageRemoved = false;
+      };
+
+      reader.readAsDataURL(file);
+    }
+  }
+
+  document.getElementById("removeImage").addEventListener("click", () => {
+    const imagePreview = document.getElementById('imagePreview');
+    imagePreview.style.display = 'none';
+    imagePreview.src = "";
+    imageRemoved = true;
+    const fileSelector = document.getElementById('image');
+    fileSelector.value = '';
+
+    document.getElementById("removeImage").style.display = 'none';
+  })
+
+  // Check if there's already an image path loaded
+  const existingImagePath = "<%= @fruit_data['image_path'] %>";
+  
+  if (existingImagePath !== "") {
+    const imagePreview = document.getElementById('imagePreview');
+    imagePreview.src = "/" + existingImagePath; // Adjust the path as needed
+    imagePreview.style.display = 'block';
+    document.getElementById("removeImage").style.display = 'block';
+  }
+
+  function postData(data) {
+    fetch('<%= @action_url %>', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    })
+    .then(response => response.json())
+    .then(result => {
+      window.location.reload();
+      //document.getElementById('result').innerText = `Success: ${JSON.stringify(result)}`;
+    })
+    .catch(error => {
+      //document.getElementById('result').innerText = `Error: ${error}`;
+    });
+  }
+
+  document.getElementById('fruit_form').addEventListener('submit', function(event) {
+    event.preventDefault();
+    const form = event.target;
+    const formData = new FormData(form);
+
+    const file = document.getElementById('image').files[0];
+    const reader = new FileReader();
+
+    const data = {
+      name: formData.get('name'),
+      tastiness: formData.get('tastiness'),
+      description: formData.get('description'),
+      category: formData.get('category'),
+      price: formData.get('price'),
+      id: "<%=@fruit_data['id']%>",
+      keep_image: !imageRemoved
+    };
+
+    reader.onloadend = function() {
+      const base64String = reader.result.replace('data:', '').replace(/^.+,/, '');
+
+      data["image"] = base64String
+
+      postData(data);
+    };
+
+    if (file) {
+      reader.readAsDataURL(file);
+    } else {
+      postData(data);
+    }
+  });
+</script>

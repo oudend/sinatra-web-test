@@ -1,0 +1,46 @@
+fruit:
+  search: Sök frukt...
+  all: Alla frukter i butiken
+  create: Skapa frukt
+  name: Namn
+  category: Kategori
+  tastiness: Smaklighet
+  description: Beskrivning
+  price: Pris
+  image: Bild
+general:
+  edit: Redigera
+  remove: Ta bort
+  cancel: Avbryt
+  confirmRemove: !!markdown Är du säker på att du vill ta bort **%1**?
+  submit: Skicka
+  language: Välj språk
+  welcomeBack: Välkommen tillbaka
+  y: Ja
+  n: Nej
+  comments: Kommentarer
+  addComment: Lägg till en kommentar
+  writeComment: Skriv din kommentar...
+  logout: Logga ut
+login:
+  pleaseLogin: Vänligen logga in på ditt konto
+  rememberMe: Kom ihåg mig
+  username: Användarnamn
+  password: Lösenord
+  noAccount: Har du inget konto?
+  registerHere: Registrera här
+  login: Logga in
+signup:
+  pleaseSignup: Vänligen skapa ett konto
+  signup: Registrera dig
+  alreadyHaveAccount: Har du redan ett konto?
+  loginHere: Logga in här
+  email: E-post
+admin:
+  page: Administratörssida
+  username: Användarnamn
+  email: E-post
+  verified: Verifierad
+  admin: Administratör
+  actions: Åtgärder
+  id: Id

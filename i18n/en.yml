@@ -1,0 +1,46 @@
+fruit:
+  search: Search fruit...
+  all: All fruits in the store
+  create: Create fruit
+  name: Name
+  category: Category
+  tastiness: Tastiness
+  description: Description
+  price: Price
+  image: Image
+general:
+  edit: Edit
+  remove: Remove
+  cancel: Cancel
+  confirmRemove: !!markdown Are you sure you want to remove **%1**?
+  submit: Submit
+  language: Select language
+  welcomeBack: Welcome Back
+  y: Yes
+  n: No
+  comments: Comments
+  addComment: Add a comment
+  writeComment: Write your comment...
+  logout: Logout
+login:
+  pleaseLogin: Please sign in to your account
+  rememberMe: Remember Me
+  username: Username
+  password: Password
+  noAccount: Don't have an account?
+  registerHere: Register here
+  login: Sign In
+signup:
+  pleaseSignup: Please create an account
+  signup: Sign Up
+  alreadyHaveAccount: Already have an account?
+  loginHere: Log in here
+  email: Mail
+admin:
+  page: Admin Page
+  username: Username
+  email: Email
+  verified: Verified
+  admin: Admin
+  actions: Actions
+  id: Id

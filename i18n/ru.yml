@@ -1,0 +1,46 @@
+fruit:
+  search: Поиск фруктов...
+  all: Все фрукты в магазине
+  create: Создать фрукт
+  name: Название
+  category: Категория
+  tastiness: Вкусность
+  description: Описание
+  price: Цена
+  image: Изображение
+general:
+  edit: Редактировать
+  remove: Удалить
+  cancel: Отмена
+  confirmRemove: !!markdown Вы уверены, что хотите удалить **%1**?
+  submit: Отправить
+  language: Выберите язык
+  welcomeBack: С возвращением
+  y: Да
+  n: Нет
+  comments: комментарии
+  addComment: Добавить комментарий
+  writeComment: Напишите свой комментарий...
+  logout: Logout
+login:
+  pleaseLogin: Пожалуйста, войдите в свою учетную запись
+  rememberMe: Запомнить меня
+  username: Имя пользователя
+  password: Пароль
+  noAccount: У вас нет учетной записи?
+  registerHere: Зарегистрироваться здесь
+  login: Войти
+signup:
+  pleaseSignup: Пожалуйста, создайте учетную запись
+  signup: Зарегистрироваться
+  alreadyHaveAccount: Уже есть учетная запись?
+  loginHere: Войти здесь
+  email: Электронная почта
+admin:
+  page: Страница администратора
+  username: Имя пользователя
+  email: Электронная почта
+  verified: Подтвержден
+  admin: Администратор
+  actions: Действия
+  id: Id

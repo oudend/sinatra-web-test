@@ -1,0 +1,243 @@
+<section class="d-flex justify-content-center align-items-center vh-100">
+    <div class="card shadow-lg border-0 rounded-3" style="max-width: 800px;">
+    <div class="row g-0">
+        <!-- Image Column -->
+        <div class="col-lg-5 d-none d-lg-flex">
+        <img src="/img/login.png" alt="Fruits"
+            class="w-100 rounded-start" style="object-fit: cover;" />
+        </div>
+
+        <!-- Form Column -->
+        <div class="col-lg-7">
+        <div class="card-body py-5 px-md-5">
+
+            <!-- Theme & Language Switcher Row -->
+            <div class="d-flex justify-content-between mb-4">
+            <!-- Theme Switcher -->
+            <div class="mode-switch">
+                <button title="Use dark mode" id="dark" class="btn btn-sm btn-default text-secondary">
+                <i class="bi bi-moon"></i>
+                </button>
+                <button title="Use light mode" id="light" class="btn btn-sm btn-default text-secondary">
+                <i class="bi bi-sun"></i>
+                </button>
+            </div>
+
+            <!-- Language Dropdown -->
+            <div class="dropdown">
+                <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="languageDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                <%= @locale.general.language %>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdown">
+                <% R18n.available_locales.each do |locale| %>
+                    <li>
+                    <a class="dropdown-item" href="#" data-code="<%= locale.code %>">
+                        <%= locale.code == 'sv' ? 'Svenska' : locale.title %>
+                    </a>
+                    </li>
+                <% end %>
+                </ul>
+            </div>
+            </div>
+
+            <!-- Title and Description -->
+            <h2 class="text-center mb-4"><%= @locale.general.welcomeBack %></h2>
+            <p class="text-muted text-center mb-4"><%= @login ? @locale.login.pleaseLogin : @locale.signup.pleaseSignup %></p>
+
+            <!-- Login Form action="<%=@login ? "/login" : "/register" %>" method="POST" -->
+            <form id="loginForm">
+                <!-- Username input -->
+                <div class="form-floating mb-3">
+                    <input type="text" name="usernameInput" id="usernameInput" class="form-control" placeholder="Enter your username" required />
+                    <label for="usernameInput"><%= @locale.login.username %></label>
+                </div>
+
+                <%if @login != true%>
+                    <div class="form-floating mb-3">
+                        <input type="email" name="emailInput" id="emailInput" class="form-control" placeholder="Enter your email" required />
+                        <label for="emailInput"><%= @locale.signup.email %></label>
+                    </div>
+                <%end%>
+                
+                <!-- Password input with "show password" icon -->
+                <div class="form-floating mb-3 position-relative">
+                    <input type="password" name="passwordInput" id="passwordInput" class="form-control" placeholder="Enter your password" required />
+                    <label for="passwordInput"><%= @locale.login.password %></label>
+
+                    
+                    <!-- Show/Hide Password Icon -->
+                    <button type="button" class="btn position-absolute end-0 top-50 translate-middle-y me-3" id="togglePassword" tabindex="-1">
+                    <i class="bi bi-eye-slash" id="passwordIcon"></i>
+                    </button>
+                </div>
+
+                <!-- Submit button -->
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-primary btn-lg"><%=@login ? @locale.login.login : @locale.signup.signup%></button>
+                </div>
+
+                
+                <!-- Registration link -->
+                <div class="text-center mt-3">
+                    <p class="text-muted">
+                        <%if @login == true%>
+                            <%=@locale.login.noAccount%>
+                            <a href="/register" class="text-decoration-none"><%=@locale.login.registerHere%></a>
+                        <%else%>
+                            <%=@locale.signup.alreadyHaveAccount%>
+                            <a href="/login" class="text-decoration-none"><%=@locale.signup.loginHere%></a>
+                        <%end%>
+                    </p>
+                    
+                </div>
+            </form>
+
+        </div>
+        </div>
+    </div>
+    </div>
+</section>
+
+<div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 11">
+  <div id="toastNotification" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="toast-header">
+      <strong class="me-auto">Notification</strong>
+      <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+    <div class="toast-body">
+      <!-- Notification message will be inserted here -->
+    </div>
+  </div>
+</div>
+
+<!-- Add JavaScript for Password Show/Hide functionality -->
+<script>
+//   let windowRef = window //this is required to fix a cypress bug which makes it not redirect when you change the window.location.href asynchronously "https://github.com/cypress-io/cypress/issues/3994"
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('loginForm');
+
+    form.addEventListener('submit', function(event) {
+      event.preventDefault(); // Prevent the form from submitting the traditional way
+
+      // Get form data
+      const formData = new FormData(form);
+      const data = {
+        usernameInput: formData.get('usernameInput'),
+        emailInput: formData.get('emailInput'),
+        passwordInput: formData.get('passwordInput')
+      };
+
+      // Send the form data to the server using fetch
+      fetch('<%=@login ? "/login" : "/register" %>', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      })
+      .then(response => response.json())
+      .then(json => {
+        if(json.redirect_url) {
+            // window.location.href = json.redirect_url;
+            window.location.assign(json.redirect_url);
+        }
+        // Handle the JSON response
+        showToast(json.message, json.status === 'success');
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        showToast('An unexpected error occurred.', false);
+      });
+    });
+
+    // Function to show toast
+    function showToast(message, isSuccess) {
+      const toastEl = document.getElementById('toastNotification');
+      const toastBody = toastEl.querySelector('.toast-body');
+      
+      toastBody.textContent = message;
+
+      // Reset toast color classes
+      toastEl.classList.remove('bg-success', 'bg-danger', 'text-white');
+
+      if (isSuccess) {
+        toastEl.classList.add('bg-success', 'text-white');
+      } else {
+        toastEl.classList.add('bg-danger', 'text-white');
+      }
+
+      const toast = new bootstrap.Toast(toastEl);
+      toast.show();
+    }
+  });
+</script>
+
+<!-- Add JavaScript for Password Show/Hide functionality -->
+<script>
+document.getElementById('togglePassword').addEventListener('click', function (e) {
+    const passwordInput = document.getElementById('passwordInput');
+    const passwordIcon = document.getElementById('passwordIcon');
+    
+    // Toggle password visibility
+    if (passwordInput.type === 'password') {
+    passwordInput.type = 'text';
+    passwordIcon.classList.remove('bi-eye-slash');
+    passwordIcon.classList.add('bi-eye');
+    } else {
+    passwordInput.type = 'password';
+    passwordIcon.classList.remove('bi-eye');
+    passwordIcon.classList.add('bi-eye-slash');
+    }
+});
+</script>
+
+<script nonce="<%= @nonce %>">
+  function setCookie(name, value, days) {
+    var expires = "";
+    if (days) {
+      var date = new Date();
+      date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+      expires = "; expires=" + date.toUTCString();
+    }
+    document.cookie = name + "=" + (value || "") + expires + "; path=/";
+  }
+
+  function getCookie(name) {
+    var nameEQ = name + "=";
+    var ca = document.cookie.split(';');
+    for (var i = 0; i < ca.length; i++) {
+      var c = ca[i];
+      while (c.charAt(0) == ' ') c = c.substring(1, c.length);
+      if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length, c.length);
+    }
+    return null;
+  }
+
+  function setLanguage(locale) {
+    setCookie('locale', locale, 7); // Set locale in cookie for 7 days
+    window.location.reload(); // Reload the page to apply the language
+  }
+
+  // Automatically set browser's default language if no locale cookie exists
+  if (!getCookie("locale")) {
+    var browserLocale = navigator.language || navigator.userLanguage; // Get browser's language
+    setCookie("locale", browserLocale, 7);
+    window.location.reload();
+  }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get all dropdown items
+        const dropdownItems = document.querySelectorAll('.dropdown-item');
+
+        // Add click event listener to each item
+        dropdownItems.forEach(item => {
+            item.addEventListener('click', function(event) {
+                event.preventDefault(); // Prevent default link behavior
+                const localeCode = this.dataset.code; // Get the locale code from data attribute
+                setCookie("locale", localeCode, 7); // Call the setCookie function
+                window.location.reload(); // Reload the page to apply the language
+            });
+        });
+    });
+</script>
