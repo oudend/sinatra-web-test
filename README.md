@@ -1,51 +1,143 @@
-# Webbserverprogrammering 1 - Övning 2
-Exempel-projekt nummer 2 med övningar till kursen Webbserverprogrammering 1 på NTI Gymnasiet Johanneberg. 
-Efter genomgång görs övningar nedan i par.
+# Fruktparadiset
 
-![Alt text](docs/img/fruktparadiset.png)
+(Den här readme filen var skapad med hjälp av chatGPT)
+
+## Beskrivning
+
+Fruktparadiset är en webbapplikation byggd med Ruby och Sinatra som låter användare hantera frukter, registrera sig, logga in och administrera användare. Applikationen erbjuder också en kommentaravdelning för varje frukt.
+
+## Projektstruktur
+
+```
+
+└── 📁wsp1-ex2
+    └── 📁bin
+        └── rackup
+    └── 📁cells
+        └── 📁button
+            └── show.erb
+        └── 📁fruit_card
+            └── show.erb
+        └── 📁fruit_form
+            └── show.erb
+        └── 📁login
+            └── show.erb
+        └── 📁theme_switcher
+            └── show.erb
+        └── button_cell.rb
+        └── fruit_card_cell.rb
+        └── fruit_form_cell.rb
+        └── login_cell.rb
+        └── theme_switcher_cell.rb
+    └── 📁cypress
+        └── 📁downloads
+        └── 📁e2e
+            └── spec.cy.js
+        └── 📁fixtures
+            └── example.json
+        └── 📁support
+            └── commands.js
+            └── e2e.js
+    └── 📁db
+        └── fruits.sqlite
+        └── seeder.rb
+    └── 📁docs
+        └── 📁img
+            └── fruktparadiset.png
+        └── .project_structure_ignore
+        └── project_structure.txt
+    └── 📁i18n
+        └── en.yml
+        └── ru.yml
+        └── sv.yml
+    └── 📁ngrok-v3-stable-linux-amd64
+        └── ngrok
+    └── 📁public
+        └── 📁img
+            └── affaren.png
+            └── login.png
+        └── 📁js
+            └── switch.js
+        └── 📁uploads
+            └── 0.png
+            └── 2.png
+            └── 3.png
+        └── style.css
+    └── 📁views
+        └── 📁fruits
+            └── index.erb
+            └── new.erb
+            └── show.erb
+        └── admin.erb
+        └── layout.erb
+        └── login.erb
+        └── register.erb
+    └── .env
+    └── .gitignore
+    └── app.rb
+    └── config.ru
+    └── cypress.config.js
+    └── Gemfile
+    └── Gemfile.lock
+    └── LICENSE
+    └── ngrok-v3-stable-linux-amd64.tgz
+    └── rakefile
+    └── README.md
+
+```
+
+### Beskrivning av mappar och filer
+
+- **bin/rackup**: Startar applikationen.
+- **cells**: Innehåller olika celler för att rendera komponenter som knappar och formulär.
+- **cypress**: Innehåller tester för applikationen.
+- **db**: Innehåller databasen och en fil för att fylla databasen med exempeldata.
+- **docs**: Innehåller dokumentation och bilder.
+- **i18n**: Innehåller lokaliseringsfiler för att stödja flera språk.
+- **ngrok-v3-stable-linux-amd64**: Innehåller ngrok för att göra applikationen tillgänglig på internet.
+- **public**: Innehåller offentliga resurser som bilder och CSS.
+- **views**: Innehåller alla vyer (erb-filer) för applikationen.
+- **.env**: Innehåller miljövariabler.
+- **.gitignore**: Fil som anger vilka filer som ska ignoreras av git.
+- **app.rb**: Huvudfilen för applikationen.
+- **config.ru**: Rack-konfigurationsfil.
+- **Gemfile**: Lista över beroenden för applikationen.
+- **rakefile**: Innehåller olika rake-tasks för att hantera applikationen.
+
+## Funktioner
+
+- **Användarregistrering**: Användare kan registrera sig för att få tillgång till applikationen.
+- **Inloggning**: Registrerade användare kan logga in och få tillgång till fruktlistan.
+- **Frukt hantering**: Användare kan se, skapa och redigera frukter.
+- **Kommentarer**: Användare kan lämna kommentarer på frukter.
+- **Administrationsverktyg**: Administratörer kan hantera användare och deras behörigheter.
+- **Flera språk**: Applikationen stödjer flera språk via lokaliseringsfiler.
 
 ## Komma igång
-* Ladda ner repositoriet till mappen Webbserverprogrammering på din dator. Antingen som ZIP (isåfall måste du packa upp ZIP-filen) eller så laddar du ner med: `git clone`
-* Installera: `bundle install`
-* *Seeda* databasen: `rake seed`
-* Köra: `rake dev`
-* Surfa till: http://localhost:9292
 
-## Länkar
-* https://sqlbolt.com/
-* https://sqlitebrowser.org/
+1. Klona repot:
 
-## Genomgång 1
-* Visa routes `GET /fruits` och `/views/fruits/index.erb`
-* Visa `layout.erb`
-* Visa SQL:
-    * `db/seeder.rb`
-    * `db/fruits.sqlite`
-    * `app.rb/db-metoden` 
-    * *DB Browser for SQLite*
-    * *SQLBolt*
+   ```bash
+   git clone "https://github.com/oudend/sinatra-web-test"
+   ```
 
-## Uppgifter 1 (i par)
-1. Gör *SQLBolt* t.o.m. **övning 5**.
-2. Testa att sortera om frukterna på t.ex. ID.
-3. Visa all info om en frukt på routen `'/fruits/:id'`. 
-    * Använd `fruits/show.erb` och `layout.erb`.
-    * Lägg till fler funktioner som t.ex. 
-        * Visa stjärnor istället för ett nummer för fruktbetyg
-        * Lägg till fler kolumner i databasen (m.h.a. `seeder.rb`) som t.ex. origin.
-4. Lägg till ett formulär för att skapa en ny frukt. Börja med routen `GET '/fruits/new'`. 
-    * För att spara frukten behöver du skicka datat från formuläret till `POST '/fruits/new'`. Se uppgifter nedan.
+2. Navigera till projektmappen:
+   ```bash
+   cd wsp1-ex2
+   ```
+3. Installera beroenden:
+   ```bash
+   bundle install
+   ```
+4. Starta databasen och fyll den med exempeldata:
+   ```bash
+   rake seed
+   ```
+5. Starta applikationen:
+   ```bash
+   rake dev
+   ```
 
-## Genomgång 2
-* Ta bort en frukt
-* Uppdatera en frukt
-* C.R.U.D.
+Nu kan du besöka applikationen i din webbläsare på `http://localhost:9292`.
 
-## Uppgifter 2 (i par)
-5. Gör SQL Bolt t.o.m. övning 15.
-6. Gör en ta-bort-knapp som tar bort en frukt.
-7. Gör en ändra-knapp
-8. Utöka funktionerna.
-    * Utforska och lägg till de funktioner du tycker behövs
-    * Lägg till bilder till frukterna
-    * Lägg till kategorier för frukter & grönsaker
+## Licens
