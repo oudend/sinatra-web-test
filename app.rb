@@ -109,6 +109,31 @@ class App < Sinatra::Base
         { status: 'success' }.to_json
     end
 
+    post '/admin/add' do
+        user = db.execute("SELECT * FROM users WHERE username = ?", [session['user_id']]).first
+
+        if user['admin'] == 0 
+            return
+        end
+
+        user_id = params[:id]
+        data = JSON.parse(request.body.read) # Read and parse the JSON request body
+
+        username = data['username']
+        password = data['password']
+        email = data['email']
+        verified = data['verified'].to_i
+        admin = data['admin'].to_i
+
+        password_hash = BCrypt::Password.create(password)
+
+        # Update the user in the database
+        db.execute("INSERT INTO users (username, password_hash, email, verified, admin) VALUES (?, ?, ?, ?, ?)", [username, password_hash, email, verified, admin])
+
+        # Respond with a JSON object indicating success
+        { status: 'success' }.to_json
+    end
+
     get '/login' do
         @loginCell = LoginCell.new
 
