@@ -4,12 +4,9 @@ require_relative './cells/button_cell.rb'
 require_relative './cells/fruit_form_cell.rb'
 require_relative './cells/fruit_card_cell.rb'
 require_relative './cells/login_cell.rb'
-# require 'rack-ssl-enforcer'
 require 'securerandom'
 require 'sanitize'
-# require 'rack/protection'
 require 'bcrypt'
-# require 'rest-client'
 require 'json'
 require 'sendgrid-ruby'
 require 'dotenv/load'  # This loads the .env file
@@ -22,26 +19,9 @@ class App < Sinatra::Base
             @sg ||= SendGrid::API.new(api_key: ENV['SENDGRID_API_KEY'])
         end
     end
-    
-    # use Rack::Protection
 
-    # use Rack::SslEnforcer
-
-    # use SecureHeaders::Middleware
-
-    # SecureHeaders::Configuration.default do |config|
-    #     config.hsts = "max-age=31536000; includeSubDomains" # Force HTTPS
-    #     config.x_content_type_options = "nosniff"           # Prevent MIME-type sniffing
-    #     config.x_frame_options = "DENY"                     # Prevent clickjacking
-    #     config.x_xss_protection = "1; mode=block"           # Enable XSS protection
-    # end
-
-    # use Rack::Throttle::Hourly,   :max => 1000   # requests
-    # use Rack::Throttle::Minute,   :max => 60    # requests
-
-    # use Rack::Session::Cookie, :key => 'rack.session',
-    #                         :path => '/',
-    #                         :secret => 'your_secret'
+    use Rack::Throttle::Hourly,   :max => 1000   # requests
+    use Rack::Throttle::Minute,   :max => 60    # requests
 
     enable :sessions
     use Rack::Session::Pool, :expire_after => 2592000
@@ -130,22 +110,12 @@ class App < Sinatra::Base
     end
 
     get '/login' do
-        # if logged_in?
-        #     redirect '/fruits'
-        #     return
-        # end
-
         @loginCell = LoginCell.new
 
         erb :"login", :layout => false
     end
 
     get '/register' do
-        # if logged_in?
-        #     redirect '/fruits'
-        #     return
-        # end
-
         @loginCell = LoginCell.new
 
         erb :"register", :layout => false
@@ -154,15 +124,11 @@ class App < Sinatra::Base
     post '/register' do 
         content_type :json
 
-        # if logged_in?
-        #     return { status: 'success', redirect_url: '/fruits' }.to_json
-        # end
-
         request_payload = JSON.parse request.body.read
 
-        username = request_payload["usernameInput"]
-        email = request_payload["emailInput"]
-        password = request_payload["passwordInput"]
+        username = Sanitize.fragment(request_payload["usernameInput"])
+        email = Sanitize.fragment(request_payload["emailInput"])
+        password = Sanitize.fragment(request_payload["passwordInput"])
 
         begin
             db.transaction do
@@ -246,8 +212,6 @@ class App < Sinatra::Base
                 WHERE fruits.category = ?
                 GROUP BY fruits.id
             ', category)
-
-            # @categorized_fruit[category] = db.execute('SELECT * FROM FRUITS WHERE category = ?', category)
         end
 
         @fruitCardCell = FruitCardCell.new
@@ -255,19 +219,12 @@ class App < Sinatra::Base
         erb(:"fruits/index")
     end
 
-    # Övning no. 2.1
-    # Routen visar ett formulär för att spara en ny frukt till databasen.
     get '/fruits/new' do
         @fruitFormCell = FruitFormCell.new
         erb(:"fruits/new")
     end
 
-    # Övning no. 2.2
-    # Routen sparar en frukt till databasen och gör en redirect till '/fruits'.
     post '/fruits/new' do
-        # rate_limit 'newfruit', 2,  20,
-        #                        10, 600
-
         request_payload = JSON.parse request.body.read
 
         name = Sanitize.fragment(request_payload['name']) # Sanitize user input
@@ -306,11 +263,6 @@ class App < Sinatra::Base
     post '/login' do
         content_type :json
 
-        # if logged_in?
-        #     return { status: 'success', redirect_url: '/fruits', message: 'Redirecting to /fruits' }.to_json
-        #     # redirect '/fruits'
-        # end
-
         request_payload = JSON.parse request.body.read
 
         username = request_payload["usernameInput"]
@@ -338,9 +290,6 @@ class App < Sinatra::Base
     end
 
     post '/fruits/change' do
-        # rate_limit 'newfruit', 2,  20,
-        #                        10, 600
-
         request_payload = JSON.parse request.body.read
 
         name = Sanitize.fragment(request_payload['name']) # Sanitize user input
@@ -394,7 +343,7 @@ class App < Sinatra::Base
     end
 
     post '/fruits/:id/comments' do |id|
-        content = params[:content]
+        content = Sanitize.fragment(params[:content])
         user_id = session['user_id'] # Assuming the user is logged in
 
         user = db.execute("SELECT * FROM users WHERE username = ?", [user_id]).first
