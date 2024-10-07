@@ -19,7 +19,9 @@ task :run do
     sleep 5
 
     # Start ngrok
-    sh 'ngrok-v3-stable-linux-amd64/ngrok http 9292'
+    # sh 'ssh -R fruitparadise:80:localhost:9292 serveo.net'
+    sh 'autossh -M 0 -R fruitparadise:80:localhost:9292 serveo.net'
+    # sh 'ngrok-v3-stable-linux-amd64/ngrok http 9292'
     
     # Ensure the Sinatra app stops when you kill the Rake task
     at_exit { Process.kill('TERM', pid) }

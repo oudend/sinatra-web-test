@@ -8,17 +8,29 @@ function setTheme(mode = null) {
   localStorage.setItem("bs-theme", modeChosen);
 
   document.documentElement.setAttribute("data-bs-theme", modeChosen);
-  document
-    .querySelectorAll(".mode-switch .btn")
-    .forEach((e) => e.classList.remove("text-body"));
+  updateIcon(modeChosen);
+}
 
-  document.getElementById(modeChosen).classList.add("text-body");
+function updateIcon(mode) {
+  const themeIcon = document.getElementById("theme-icon");
+
+  if (mode === "light") {
+    themeIcon.classList.remove("bi-moon");
+    themeIcon.classList.add("bi-sun");
+  } else {
+    themeIcon.classList.remove("bi-sun");
+    themeIcon.classList.add("bi-moon");
+  }
 }
 
 setTheme();
-document
-  .querySelectorAll(".mode-switch .btn")
-  .forEach((e) => e.addEventListener("click", () => setTheme(e.id)));
+
+document.getElementById("theme-toggle").addEventListener("click", () => {
+  const currentMode =
+    localStorage.getItem("bs-theme") === "light" ? "dark" : "light";
+  setTheme(currentMode);
+});
+
 window
   .matchMedia("(prefers-color-scheme: light)")
   .addEventListener("change", () => setTheme());

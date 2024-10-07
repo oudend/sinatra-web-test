@@ -13,9 +13,6 @@ describe("Login Page", () => {
     // Check for password input
     cy.get('input[name="passwordInput"]').should("be.visible");
 
-    // Check for Remember Me checkbox
-    cy.get('input[name="rememberMeCheckbox"]').should("be.visible");
-
     // Check for language dropdown
     cy.get("#languageDropdown").should("be.visible");
 

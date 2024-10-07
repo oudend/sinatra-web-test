@@ -12,7 +12,7 @@
 </head>
 <body class="d-flex flex-column min-vh-100">
     <nav class="navbar navbar-expand-lg sticky-top shadow">
-        <div class="container-fluid d-flex align-items-center justify-content-between py-2">
+        <div class="container-fluid d-flex align-items-center justify-content-between py-2" style="height: 80%;">
             <!-- Logo and Title -->
             <a href="/fruits" class="text-decoration-none d-flex align-items-center">
                 <img src="/img/affaren.png" class="logo-image" alt="Fruktparadiset logo" style="height: 50px; width: auto; object-fit: cover;">
@@ -25,7 +25,7 @@
             </button>
 
             <!-- Navbar Links and Right-side Wrapper -->
-            <div class="collapse navbar-collapse justify-content-between" id="navbarNav">
+            <div class="collapse navbar-collapse justify-content-between h-100" id="navbarNav">
                 <!-- Navigation links -->
                 <ul class="navbar-nav align-items-center ms-lg-5">
                     <li class="nav-item">
@@ -41,27 +41,31 @@
                     <%end%>
                 </ul>
 
-                <div class="d-flex align-items-center ms-auto gap-3">
-                    <!-- Mode switch buttons -->
-                    <div class="mode-switch d-flex">
-                        <button title="Use dark mode" id="dark" class="btn btn-sm btn-default text-secondary me-2">
-                            <i class="bi bi-moon"></i>
-                        </button>
-                        <button title="Use light mode" id="light" class="btn btn-sm btn-default text-secondary">
-                            <i class="bi bi-sun"></i>
-                        </button>
+                <div class="d-flex align-items-center ms-auto gap-3 h-100">
+                    <!-- Mode switch button -->
+                    <div class="mode-switch d-flex h-100">
+                    <button title="Toggle theme" id="theme-toggle" class="btn btn-sm btn-default text-secondary h-100">
+                        <i id="theme-icon" class="bi"></i>
+                    </button>
                     </div>
 
                     <!-- Language dropdown -->
-                    <div class="dropdown">
-                        <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="languageDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                            <%= t.general.language %>
+                    <div class="dropdown h-100">
+                        <button class="btn btn-outline-secondary dropdown-toggle h-100 d-flex align-items-center" type="button" id="languageDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <img src="/img/flags/<%= t.locale.code.locale.code %>.png" alt="<%= t.locale.code.locale.title %> flag" class="me-2" style="width: 24px; height: 24px; object-fit: cover; border-radius: 4px;" />
+                            <span class="d-flex align-items-center">
+                                <%= t.general.language %>
+                            </span>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="languageDropdown">
                             <% R18n.available_locales.each do |locale| %>
                                 <li>
-                                    <a class="dropdown-item" href="#" data-code="<%= locale.code %>">
-                                        <%= locale.code == 'sv' ? 'Svenska' : locale.title %>
+                                    <a class="dropdown-item d-flex align-items-center" href="#" data-code="<%= locale.code %>">
+                                        <img src="/img/flags/<%= locale.code %>.png" alt="<%= locale.title %> flag" class="me-2" style="width: 24px; height: 24px; object-fit: cover; border-radius: 4px;" />
+                                        <span class="d-flex align-items-center">
+                                            <%= locale.code == 'sv' ? 'Svenska' : locale.title %>
+                                        </span>
+                                        
                                     </a>
                                 </li>
                             <% end %>
@@ -69,8 +73,8 @@
                     </div>
 
                     <!-- Logout button -->
-                    <form action="/logout" method="POST" class="ms-auto">
-                        <button type="submit" class="btn btn-outline-danger btn-sm align-self-stretch d-flex align-items-center">
+                    <form action="/logout" method="POST" class="ms-auto h-100">
+                        <button type="submit" class="btn btn-outline-danger btn-sm align-self-stretch d-flex align-items-center h-100">
                             <i class="bi bi-box-arrow-right"></i> <%= t.general.logout %>
                         </button>
                     </form>
@@ -88,7 +92,7 @@
         <p class="mb-0">Contact us</p>
     </footer>
 </body>
-<script nonce="<%= @nonce %>">
+<script>
   function setCookie(name, value, days) {
     var expires = "";
     if (days) {

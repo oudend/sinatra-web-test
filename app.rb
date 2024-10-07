@@ -302,7 +302,7 @@ class App < Sinatra::Base
         keep_image = request_payload['keep_image']
         current_time = Time.now.strftime('%Y-%m-%d %H:%M:%S')
 
-        db.execute("UPDATE fruits SET name=?, tastiness=?, description=?, price=?, edited_at=? WHERE id=?", [name, tastiness, description, price, current_time, fruit_id])
+        db.execute("UPDATE fruits SET name=?, tastiness=?, description=?, price=?, edited_at=?, category=?, WHERE id=?", [name, tastiness, description, price, current_time, category, fruit_id])
 
         if !keep_image
             db.execute("UPDATE fruits SET image_path = NULL WHERE id=?", [fruit_id])
